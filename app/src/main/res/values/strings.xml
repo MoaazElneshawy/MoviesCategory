@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MoviesCategory</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
+    <array name="order_filter">
+        <item>Popular</item>
+        <item>Tob Rated</item>
+    </array>
+    <string name="title">Title</string>
+    <string name="overview">Overview</string>
+    <string name="vote_average">Vote Average</string>
+    <string name="release_date">Release Date</string>
+</resources>
