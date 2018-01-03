@@ -10,4 +10,13 @@
     <string name="overview">Overview</string>
     <string name="vote_average">Vote Average</string>
     <string name="release_date">Release Date</string>
+    <string name="fav">Mark As \n Favorite</string>
+    <string name="trailers">Trailers</string>
+    <string name="no_trailers">No Trailers</string>
+    <string name="no_reviews">No Reviews</string>
+    <string name="reviews">Reviews</string>
+    <string name="author">Author</string>
+    <string name="content">Content</string>
+    <string name="image_description">Movie Poster</string>
+
 </resources>
