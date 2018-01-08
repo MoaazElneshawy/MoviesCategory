@@ -1,14 +1,17 @@
 package com.learnmore.me.moviescategory.Activities;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,6 +23,8 @@ import com.learnmore.me.moviescategory.Adapters.TrailerAdapter;
 import com.learnmore.me.moviescategory.Models.MovieModel;
 import com.learnmore.me.moviescategory.Models.ReviewModel;
 import com.learnmore.me.moviescategory.Models.TrailerModel;
+import com.learnmore.me.moviescategory.Provider.DataContract;
+import com.learnmore.me.moviescategory.Provider.DatabaseHelper;
 import com.learnmore.me.moviescategory.R;
 import com.squareup.picasso.Picasso;
 
@@ -37,6 +42,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     ImageView mPoster;
     TextView mTitleTV, mOverviewTV, mVoteAverageTV, mYearTV, mTrailerTV, mReviewsTV, mReviewAuthorTV, mReviewContentTV;
     RecyclerView mTrailersRV, mReviewsRV;
+    Button mAddToFavBTN;
     RequestQueue queue;
     MovieModel model;
     List<TrailerModel> trailers;
@@ -44,15 +50,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String VIDEOS = "/videos";
     public static final String REVIEWS = "/reviews";
-    public static final String API_KEY = "?api_key= -- API KEY -- ";
-
+    public static final String API_KEY = "?api_key= -- key --";
+    DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         init();
-
+        dbHelper= new DatabaseHelper(this);
 
         comingIntent = getIntent();
         if (comingIntent != null) {
@@ -77,6 +83,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mOverviewTV = findViewById(R.id.movie_tv_overview);
         mVoteAverageTV = findViewById(R.id.movie_tv_vote_average);
         mYearTV = findViewById(R.id.movie_tv_year);
+        mAddToFavBTN = findViewById(R.id.movie_add_to_fav_btn);
         mTrailersRV = findViewById(R.id.trailers_rv);
         mTrailersRV.setLayoutManager(new LinearLayoutManager(this));
         mReviewsRV = findViewById(R.id.reviews_rv);
@@ -180,10 +187,22 @@ public class MovieDetailsActivity extends AppCompatActivity {
             mReviewL.setVisibility(View.GONE);
         }
 
-        ReviewsAdapter adapter = new ReviewsAdapter(this,reviews);
+        ReviewsAdapter adapter = new ReviewsAdapter(this, reviews);
         mReviewsRV.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
 
+    public void addMovieToFavorite(View view) {
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DataContract.TableContract.MOVIE_ID,model.getId());
+        contentValues.put(DataContract.TableContract.MOVIE_POSTER,model.getPosterPath());
+        contentValues.put(DataContract.TableContract.MOVIE_OVERVIEW,model.getOverview());
+        contentValues.put(DataContract.TableContract.MOVIE_VOTE,model.getVoteAverage());
+        contentValues.put(DataContract.TableContract.MOVIE_TITLE,model.getTitle());
+
+        this.getContentResolver().insert(DataContract.TableContract.CONTENT_URI_TABLE,contentValues);
+
+    }
 }

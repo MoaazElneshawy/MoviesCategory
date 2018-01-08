@@ -32,9 +32,11 @@ public class MainActivity extends AppCompatActivity {
     final static String POPULAR_CATEGORY = "popular";
     final static String TOP_RATED_CATEGORY = "top_rated";
     final static String API_PARAM = "?api_key=";
-    final static String API_KEY = "-- API KEY --";
+    final static String API_KEY = "-- key --";
     final static String CATEGORY_KEY = "category_key";
     final static String FAVORITES_CATEGORY = "favorites";
+    static String CURRENT_STATE = "current";
+
 
     RequestQueue queue;
     RecyclerView mMoviesRV;
@@ -54,10 +56,16 @@ public class MainActivity extends AppCompatActivity {
         adapter = new MovieAdapter(this, movies);
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.get(CATEGORY_KEY).equals(TOP_RATED_CATEGORY)) {
-                requestMovies(BASE + TOP_RATED_CATEGORY + API_PARAM + API_KEY);
+            String current = savedInstanceState.getString(CATEGORY_KEY);
+            if (current != null) {
+                if (current.equalsIgnoreCase(TOP_RATED_CATEGORY)) {
+                    requestMovies(BASE + TOP_RATED_CATEGORY + API_PARAM + API_KEY);
+                } else {
+                    requestMovies(BASE + POPULAR_CATEGORY + API_PARAM + API_KEY);
+                }
             }
-        } else {
+        }
+        else {
             requestMovies(BASE + POPULAR_CATEGORY + API_PARAM + API_KEY);
         }
 
@@ -75,9 +83,11 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.order_popular:
                 requestMovies(BASE + POPULAR_CATEGORY + API_PARAM + API_KEY);
+                CURRENT_STATE = POPULAR_CATEGORY;
                 return true;
             case R.id.order_top_rated:
                 requestMovies(BASE + TOP_RATED_CATEGORY + API_PARAM + API_KEY);
+                CURRENT_STATE = TOP_RATED_CATEGORY;
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -139,12 +149,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.getString(CATEGORY_KEY, TOP_RATED_CATEGORY);
+        outState.putString(CATEGORY_KEY, CURRENT_STATE);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         savedInstanceState.getString(CATEGORY_KEY);
+
+
     }
 }

@@ -17,6 +17,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.MovieDetailsActivity"></activity>
+
+        <provider
+            android:name=".Provider.DatabaseProvider"
+            android:authorities="com.learnmore.me.moviescategory.Provider"
+            android:exported="false" />
     </application>
 
 </manifest>
