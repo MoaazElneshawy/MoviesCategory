@@ -2,10 +2,12 @@ package com.learnmore.me.moviescategory.Activities;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,20 +52,29 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String VIDEOS = "/videos";
     public static final String REVIEWS = "/reviews";
-    public static final String API_KEY = "?api_key= -- key --";
+    public static final String API_KEY = "?api_key=-- API --";
     DatabaseHelper dbHelper;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         init();
-        dbHelper= new DatabaseHelper(this);
+        dbHelper = new DatabaseHelper(this);
 
         comingIntent = getIntent();
         if (comingIntent != null) {
-            model = comingIntent.getParcelableExtra("movie");
-            setValuesToUI(model);
+            Log.e("from", "movie details");
+            String m = comingIntent.getStringExtra("m");
+            if (m.equalsIgnoreCase("movie")) {
+                model = comingIntent.getParcelableExtra("movie");
+                Log.e("from", "movie details" + comingIntent.getParcelableExtra("movie") + " 010");
+                setValuesToUI(model);
+            } else {
+                cursor = comingIntent.getParcelableExtra("cu");
+                cursorData(cursor);
+            }
         }
 
 
@@ -141,6 +152,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         if (trailers.size() == 0) {
             mTrailerTV.setText(getString(R.string.no_trailers));
+            mTrailersRV.setVisibility(View.GONE);
         }
         TrailerAdapter adapter = new TrailerAdapter(this, trailers);
         mTrailersRV.setAdapter(adapter);
@@ -196,13 +208,36 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public void addMovieToFavorite(View view) {
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DataContract.TableContract.MOVIE_ID,model.getId());
-        contentValues.put(DataContract.TableContract.MOVIE_POSTER,model.getPosterPath());
-        contentValues.put(DataContract.TableContract.MOVIE_OVERVIEW,model.getOverview());
-        contentValues.put(DataContract.TableContract.MOVIE_VOTE,model.getVoteAverage());
-        contentValues.put(DataContract.TableContract.MOVIE_TITLE,model.getTitle());
+        contentValues.put(DataContract.TableContract.MOVIE_ID, model.getId());
+        contentValues.put(DataContract.TableContract.MOVIE_TITLE, model.getTitle());
+        contentValues.put(DataContract.TableContract.MOVIE_POSTER, model.getPosterPath());
+        contentValues.put(DataContract.TableContract.MOVIE_OVERVIEW, model.getOverview());
+        contentValues.put(DataContract.TableContract.MOVIE_VOTE, model.getVoteAverage());
 
-        this.getContentResolver().insert(DataContract.TableContract.CONTENT_URI_TABLE,contentValues);
+        this.getContentResolver().insert(DataContract.TableContract.CONTENT_URI_TABLE, contentValues);
 
+    }
+
+    public void cursorData(Cursor cursor) {
+
+        mTrailersRV.setVisibility(View.GONE);
+        mTrailerTV.setVisibility(View.GONE);
+        mReviewsRV.setVisibility(View.GONE);
+        mReviewsTV.setVisibility(View.GONE);
+        mReviewContentTV.setVisibility(View.GONE);
+        mReviewAuthorTV.setVisibility(View.GONE);
+        try {
+            mTitleTV.setText(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_TITLE)));
+            mOverviewTV.setText(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_OVERVIEW)));
+            mVoteAverageTV.setText(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_VOTE)));
+            mTitleTV.setText(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_TITLE)));
+            Picasso.with(this)
+                    .load(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_POSTER)))
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(mPoster);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

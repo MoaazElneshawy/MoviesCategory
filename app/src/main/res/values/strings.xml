@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MoviesCategory</string>
     <string name="popular">Popular</string>
+    <string name="favorite">Favorites</string>
     <string name="top_rated">Top Rated</string>
     <array name="order_filter">
         <item>Popular</item>

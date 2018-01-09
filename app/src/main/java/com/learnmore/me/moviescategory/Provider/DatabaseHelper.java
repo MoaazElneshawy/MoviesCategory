@@ -13,12 +13,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
 
     final String create_query = "CREATE TABLE " + DataContract.TableContract.TABLE_NAME + " ( "
-            + DataContract.TableContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT , "
-            + DataContract.TableContract.MOVIE_ID + "INTEGER , "
-            + DataContract.TableContract.MOVIE_TITLE + "TEXT , "
-            + DataContract.TableContract.MOVIE_POSTER + "TEXT , "
-            + DataContract.TableContract.MOVIE_OVERVIEW + "TEXT , "
-            + DataContract.TableContract.MOVIE_VOTE + "TEXT ); ";
+            + DataContract.TableContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + DataContract.TableContract.MOVIE_ID + " INTEGER, "
+            + DataContract.TableContract.MOVIE_TITLE + " TEXT, "
+            + DataContract.TableContract.MOVIE_POSTER + " TEXT, "
+            + DataContract.TableContract.MOVIE_OVERVIEW + " TEXT, "
+            + DataContract.TableContract.MOVIE_VOTE + " TEXT ); ";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);

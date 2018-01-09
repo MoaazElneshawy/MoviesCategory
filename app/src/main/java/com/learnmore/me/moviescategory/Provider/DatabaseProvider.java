@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by moaazelneshawy on 03/01/18.
@@ -62,6 +64,7 @@ public class DatabaseProvider extends ContentProvider {
                 } else {
                     throw new android.database.SQLException("Failed to insert Movie in the database");
                 }
+                System.out.println("id , " + id);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -83,7 +86,7 @@ public class DatabaseProvider extends ContentProvider {
 
     private static UriMatcher buildUriMatcher() {
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(DataContract.AUTHORITY, "/#", ALL_MOVIES);
+        matcher.addURI(DataContract.AUTHORITY, DataContract.TableContract.TABLE_NAME, ALL_MOVIES);
         return matcher;
     }
 

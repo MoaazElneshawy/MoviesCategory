@@ -1,10 +1,16 @@
 package com.learnmore.me.moviescategory.Activities;
 
+import android.database.Cursor;
+import android.support.v4.content.CursorLoader;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,8 +21,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.learnmore.me.moviescategory.Adapters.CursorAdapter;
 import com.learnmore.me.moviescategory.Adapters.MovieAdapter;
 import com.learnmore.me.moviescategory.Models.MovieModel;
+import com.learnmore.me.moviescategory.Provider.DataContract;
 import com.learnmore.me.moviescategory.R;
 
 import org.json.JSONArray;
@@ -26,13 +34,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks {
 
     final static String BASE = "http://api.themoviedb.org/3/movie/";
     final static String POPULAR_CATEGORY = "popular";
     final static String TOP_RATED_CATEGORY = "top_rated";
     final static String API_PARAM = "?api_key=";
-    final static String API_KEY = "-- key --";
+    final static String API_KEY = "-- API --";
     final static String CATEGORY_KEY = "category_key";
     final static String FAVORITES_CATEGORY = "favorites";
     static String CURRENT_STATE = "current";
@@ -42,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mMoviesRV;
     MovieAdapter adapter;
     List<MovieModel> movies;
+    CursorLoader loader;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,19 +66,24 @@ public class MainActivity extends AppCompatActivity {
         mMoviesRV.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new MovieAdapter(this, movies);
 
+        getSupportLoaderManager().initLoader(1, null, this);
+
         if (savedInstanceState != null) {
             String current = savedInstanceState.getString(CATEGORY_KEY);
             if (current != null) {
                 if (current.equalsIgnoreCase(TOP_RATED_CATEGORY)) {
                     requestMovies(BASE + TOP_RATED_CATEGORY + API_PARAM + API_KEY);
+                } else if (current.equalsIgnoreCase(FAVORITES_CATEGORY)) {
+                    getFavoriteMovies();
                 } else {
                     requestMovies(BASE + POPULAR_CATEGORY + API_PARAM + API_KEY);
                 }
             }
-        }
-        else {
+        } else {
             requestMovies(BASE + POPULAR_CATEGORY + API_PARAM + API_KEY);
         }
+
+
 
     }
 
@@ -88,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.order_top_rated:
                 requestMovies(BASE + TOP_RATED_CATEGORY + API_PARAM + API_KEY);
                 CURRENT_STATE = TOP_RATED_CATEGORY;
+                return true;
+            case R.id.order_favorite:
+                CURRENT_STATE = FAVORITES_CATEGORY;
+                getFavoriteMovies();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -140,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        Log.e("from", "jsonFor");
         mMoviesRV.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -157,6 +177,29 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         savedInstanceState.getString(CATEGORY_KEY);
 
+    }
+
+    protected void getFavoriteMovies() {
+        CursorAdapter adapter = new CursorAdapter(cursor, this);
+        mMoviesRV.setAdapter(adapter);
+    }
+
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        Uri uri = DataContract.TableContract.CONTENT_URI_TABLE;
+        loader = new CursorLoader(this, uri, null, null, null, null);
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader loader, Object data) {
+        cursor = (Cursor) data;
+        cursor.moveToFirst();
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
 
     }
 }
