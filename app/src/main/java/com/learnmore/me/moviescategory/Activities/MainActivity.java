@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
     final static String POPULAR_CATEGORY = "popular";
     final static String TOP_RATED_CATEGORY = "top_rated";
     final static String API_PARAM = "?api_key=";
-    final static String API_KEY = "-- API --";
+    final static String API_KEY = "-- API KEY -- ";
     final static String CATEGORY_KEY = "category_key";
     final static String FAVORITES_CATEGORY = "favorites";
     static String CURRENT_STATE = "current";
@@ -160,7 +160,6 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.e("from", "jsonFor");
         mMoviesRV.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -170,6 +169,7 @@ public class MainActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CATEGORY_KEY, CURRENT_STATE);
+
     }
 
     @Override
@@ -196,6 +196,7 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(Loader loader, Object data) {
         cursor = (Cursor) data;
         cursor.moveToFirst();
+
     }
 
     @Override

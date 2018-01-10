@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,22 +39,24 @@ public class CursorAdapter extends RecyclerView.Adapter<CursorAdapter.CursorHold
     }
 
     @Override
-    public void onBindViewHolder(CursorHolder holder, int position) {
+    public void onBindViewHolder(CursorHolder holder, final int position) {
         if (cursor != null || cursor.getCount() != 0) {
             cursor.moveToFirst();
-
             Picasso.with(context)
-                    .load(cursor.getColumnIndex(DataContract.TableContract.MOVIE_POSTER))
+                    .load(posterUrl(cursor,position))
                     .error(R.drawable.ic_launcher_foreground)
                     .into(holder.iv_poster1);
-
         }
         holder.iv_poster1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                cursor.moveToPosition(position);
                 Intent intent = new Intent(context, MovieDetailsActivity.class);
-                intent.putExtra("cu", (Parcelable) cursor);
-                intent.putExtra("cu", "cursor");
+                intent.putExtra("intent", "cursor");
+                intent.putExtra("title", cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_TITLE)));
+                intent.putExtra("overview", cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_OVERVIEW)));
+                intent.putExtra("vote", cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_VOTE)));
+                intent.putExtra("poster", cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_POSTER)));
                 context.startActivity(intent);
             }
         });
@@ -73,5 +76,12 @@ public class CursorAdapter extends RecyclerView.Adapter<CursorAdapter.CursorHold
             iv_poster1 = view.findViewById(R.id.iv_first);
 
         }
+    }
+
+    String posterUrl(Cursor cursor, int position) {
+        String poster = "";
+        cursor.moveToPosition(position);
+        poster = cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_POSTER));
+        return poster;
     }
 }

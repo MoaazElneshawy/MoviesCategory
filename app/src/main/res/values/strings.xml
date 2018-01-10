@@ -19,5 +19,6 @@
     <string name="author">Author</string>
     <string name="content">Content</string>
     <string name="image_description">Movie Poster</string>
+    <string name="movie_added">Movie has added to your favorites</string>
 
 </resources>

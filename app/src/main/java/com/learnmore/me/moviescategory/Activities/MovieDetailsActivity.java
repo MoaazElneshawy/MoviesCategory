@@ -52,7 +52,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String VIDEOS = "/videos";
     public static final String REVIEWS = "/reviews";
-    public static final String API_KEY = "?api_key=-- API --";
+    public static final String API_KEY = "?api_key= -- API KEY --";
     DatabaseHelper dbHelper;
     Cursor cursor;
 
@@ -65,15 +65,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         comingIntent = getIntent();
         if (comingIntent != null) {
-            Log.e("from", "movie details");
-            String m = comingIntent.getStringExtra("m");
-            if (m.equalsIgnoreCase("movie")) {
+            String extra = comingIntent.getStringExtra("intent");
+            if (extra.equalsIgnoreCase("movie")) {
                 model = comingIntent.getParcelableExtra("movie");
-                Log.e("from", "movie details" + comingIntent.getParcelableExtra("movie") + " 010");
                 setValuesToUI(model);
-            } else {
-                cursor = comingIntent.getParcelableExtra("cu");
-                cursorData(cursor);
+            } else if (extra.equalsIgnoreCase("cursor")) {
+                String title = comingIntent.getStringExtra("title");
+                String vote = comingIntent.getStringExtra("vote");
+                String overview = comingIntent.getStringExtra("overview");
+                String poster = comingIntent.getStringExtra("poster");
+                cursorData(title, vote, overview, poster);
             }
         }
 
@@ -213,12 +214,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
         contentValues.put(DataContract.TableContract.MOVIE_POSTER, model.getPosterPath());
         contentValues.put(DataContract.TableContract.MOVIE_OVERVIEW, model.getOverview());
         contentValues.put(DataContract.TableContract.MOVIE_VOTE, model.getVoteAverage());
-
         this.getContentResolver().insert(DataContract.TableContract.CONTENT_URI_TABLE, contentValues);
-
+        Toast.makeText(this, getString(R.string.movie_added), Toast.LENGTH_SHORT).show();
     }
 
-    public void cursorData(Cursor cursor) {
+    public void cursorData(String title, String vote, String overview, String poster) {
 
         mTrailersRV.setVisibility(View.GONE);
         mTrailerTV.setVisibility(View.GONE);
@@ -227,17 +227,22 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mReviewContentTV.setVisibility(View.GONE);
         mReviewAuthorTV.setVisibility(View.GONE);
         try {
-            mTitleTV.setText(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_TITLE)));
-            mOverviewTV.setText(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_OVERVIEW)));
-            mVoteAverageTV.setText(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_VOTE)));
-            mTitleTV.setText(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_TITLE)));
+            mTitleTV.setText(title);
+            mOverviewTV.setText(overview);
+            mVoteAverageTV.setText(vote);
             Picasso.with(this)
-                    .load(cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_POSTER)))
+                    .load(poster)
                     .error(R.drawable.ic_launcher_foreground)
                     .into(mPoster);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(MovieDetailsActivity.this,MainActivity.class));
     }
 }

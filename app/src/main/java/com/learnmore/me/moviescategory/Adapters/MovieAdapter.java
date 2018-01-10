@@ -47,7 +47,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             public void onClick(View view) {
                 Intent intent = new Intent(context, MovieDetailsActivity.class);
                 intent.putExtra("movie",(Parcelable) movies.get(position));
-                intent.putExtra("m","movie");
+                intent.putExtra("intent","movie");
 
                 context.startActivity(intent);
             }
