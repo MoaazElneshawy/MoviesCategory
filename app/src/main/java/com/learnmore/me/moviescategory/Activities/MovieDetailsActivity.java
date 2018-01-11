@@ -52,9 +52,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String VIDEOS = "/videos";
     public static final String REVIEWS = "/reviews";
-    public static final String API_KEY = "?api_key= -- API KEY --";
+    public static final String API_KEY = "?api_key=-- API KEY --";
     DatabaseHelper dbHelper;
-    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

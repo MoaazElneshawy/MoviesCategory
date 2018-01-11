@@ -16,14 +16,11 @@ import com.learnmore.me.moviescategory.Provider.DataContract;
 import com.learnmore.me.moviescategory.R;
 import com.squareup.picasso.Picasso;
 
-/**
- * Created by moaazelneshawy on 09/01/18.
- */
 
 public class CursorAdapter extends RecyclerView.Adapter<CursorAdapter.CursorHolder> {
 
-    Cursor cursor;
-    Context context;
+    private Cursor cursor;
+    private Context context;
 
     public CursorAdapter(Cursor cursor, Context context) {
         this.cursor = cursor;
@@ -39,18 +36,19 @@ public class CursorAdapter extends RecyclerView.Adapter<CursorAdapter.CursorHold
     }
 
     @Override
-    public void onBindViewHolder(CursorHolder holder, final int position) {
-        if (cursor != null || cursor.getCount() != 0) {
+    public void onBindViewHolder(CursorHolder holder, int position) {
+       final int current_position = position;
+        if (cursor != null) {
             cursor.moveToFirst();
             Picasso.with(context)
-                    .load(posterUrl(cursor,position))
+                    .load(posterUrl(cursor, current_position))
                     .error(R.drawable.ic_launcher_foreground)
                     .into(holder.iv_poster1);
         }
         holder.iv_poster1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cursor.moveToPosition(position);
+                cursor.moveToPosition(current_position);
                 Intent intent = new Intent(context, MovieDetailsActivity.class);
                 intent.putExtra("intent", "cursor");
                 intent.putExtra("title", cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_TITLE)));
@@ -64,22 +62,26 @@ public class CursorAdapter extends RecyclerView.Adapter<CursorAdapter.CursorHold
 
     @Override
     public int getItemCount() {
-        return cursor.getCount();
+        if (cursor != null) {
+            return cursor.getCount();
+        } else {
+            return 0;
+        }
     }
 
     class CursorHolder extends RecyclerView.ViewHolder {
 
         ImageView iv_poster1;
 
-        public CursorHolder(View view) {
+        private CursorHolder(View view) {
             super(view);
             iv_poster1 = view.findViewById(R.id.iv_first);
 
         }
     }
 
-    String posterUrl(Cursor cursor, int position) {
-        String poster = "";
+    private String posterUrl(Cursor cursor, int position) {
+        String poster;
         cursor.moveToPosition(position);
         poster = cursor.getString(cursor.getColumnIndex(DataContract.TableContract.MOVIE_POSTER));
         return poster;

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
     final static String POPULAR_CATEGORY = "popular";
     final static String TOP_RATED_CATEGORY = "top_rated";
     final static String API_PARAM = "?api_key=";
-    final static String API_KEY = "-- API KEY -- ";
+    final static String API_KEY = "-- API KEY --";
     final static String CATEGORY_KEY = "category_key";
     final static String FAVORITES_CATEGORY = "favorites";
     static String CURRENT_STATE = "current";
@@ -62,11 +62,11 @@ public class MainActivity extends AppCompatActivity
         queue = Volley.newRequestQueue(this);
         movies = new ArrayList<>();
         //Define the RecyclerView and Its properties
-        mMoviesRV = (RecyclerView) findViewById(R.id.rv_movies);
+        mMoviesRV = findViewById(R.id.rv_movies);
         mMoviesRV.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new MovieAdapter(this, movies);
 
-        getSupportLoaderManager().initLoader(1, null, this);
+        getFavoriteMovies();
 
         if (savedInstanceState != null) {
             String current = savedInstanceState.getString(CATEGORY_KEY);
@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             requestMovies(BASE + POPULAR_CATEGORY + API_PARAM + API_KEY);
         }
-
 
 
     }
@@ -180,8 +179,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     protected void getFavoriteMovies() {
-        CursorAdapter adapter = new CursorAdapter(cursor, this);
-        mMoviesRV.setAdapter(adapter);
+        getSupportLoaderManager().initLoader(1, null, this);
     }
 
 
@@ -196,6 +194,9 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(Loader loader, Object data) {
         cursor = (Cursor) data;
         cursor.moveToFirst();
+        CursorAdapter adapter = new CursorAdapter(cursor, this);
+        mMoviesRV.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
     }
 
