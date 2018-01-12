@@ -52,7 +52,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String VIDEOS = "/videos";
     public static final String REVIEWS = "/reviews";
-    public static final String API_KEY = "?api_key=-- API KEY --";
+    public static final String API_KEY = "?api_key=--APLI KEY --";
     DatabaseHelper dbHelper;
 
     @Override
@@ -73,6 +73,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 String vote = comingIntent.getStringExtra("vote");
                 String overview = comingIntent.getStringExtra("overview");
                 String poster = comingIntent.getStringExtra("poster");
+                mAddToFavBTN.setVisibility(View.GONE);
                 cursorData(title, vote, overview, poster);
             }
         }
@@ -127,7 +128,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Toast.makeText(MovieDetailsActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -172,6 +173,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MovieDetailsActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -242,6 +244,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(MovieDetailsActivity.this,MainActivity.class));
+        startActivity(new Intent(MovieDetailsActivity.this, MainActivity.class));
     }
 }

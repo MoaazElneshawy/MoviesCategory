@@ -15,6 +15,8 @@
     <string name="trailers">Trailers</string>
     <string name="no_trailers">No Trailers</string>
     <string name="no_reviews">No Reviews</string>
+    <string name="no_thing">No Thing Exists</string>
+    <string name="no_connection">No Connection !</string>
     <string name="reviews">Reviews</string>
     <string name="author">Author</string>
     <string name="content">Content</string>

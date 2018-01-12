@@ -1,6 +1,8 @@
 package com.learnmore.me.moviescategory.Activities;
 
 import android.database.Cursor;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.v4.content.CursorLoader;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     final static String API_KEY = "-- API KEY --";
     final static String CATEGORY_KEY = "category_key";
     final static String FAVORITES_CATEGORY = "favorites";
+    final static String CURRENT_SCROLLING_STATE = "scrolling";
     static String CURRENT_STATE = "current";
 
 
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     List<MovieModel> movies;
     CursorLoader loader;
     Cursor cursor;
+    private Parcelable layoutManagerSavedState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity
 
         if (savedInstanceState != null) {
             String current = savedInstanceState.getString(CATEGORY_KEY);
+            layoutManagerSavedState = savedInstanceState.getParcelable(CURRENT_SCROLLING_STATE);
             if (current != null) {
                 if (current.equalsIgnoreCase(TOP_RATED_CATEGORY)) {
                     requestMovies(BASE + TOP_RATED_CATEGORY + API_PARAM + API_KEY);
@@ -125,13 +130,14 @@ public class MainActivity extends AppCompatActivity
                     }
                     jsonFormat(response);
                 } else {
-                    Toast.makeText(MainActivity.this, "No thing !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.no_thing), Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Connection Failure !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -161,13 +167,14 @@ public class MainActivity extends AppCompatActivity
         }
         mMoviesRV.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
+        restoreLayoutManagerPosition();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CATEGORY_KEY, CURRENT_STATE);
+        outState.putParcelable(CURRENT_SCROLLING_STATE,mMoviesRV.getLayoutManager().onSaveInstanceState());
 
     }
 
@@ -175,6 +182,7 @@ public class MainActivity extends AppCompatActivity
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         savedInstanceState.getString(CATEGORY_KEY);
+        layoutManagerSavedState = savedInstanceState.getParcelable(CURRENT_SCROLLING_STATE);
 
     }
 
@@ -197,6 +205,8 @@ public class MainActivity extends AppCompatActivity
         CursorAdapter adapter = new CursorAdapter(cursor, this);
         mMoviesRV.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        restoreLayoutManagerPosition();
+
 
     }
 
@@ -204,4 +214,11 @@ public class MainActivity extends AppCompatActivity
     public void onLoaderReset(Loader loader) {
 
     }
+
+    private void restoreLayoutManagerPosition() {
+        if (layoutManagerSavedState != null) {
+            mMoviesRV.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+        }
+    }
+
 }
