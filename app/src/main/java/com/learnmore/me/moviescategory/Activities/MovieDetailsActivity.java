@@ -208,15 +208,18 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
 
     public void addMovieToFavorite(View view) {
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DataContract.TableContract.MOVIE_ID, model.getId());
-        contentValues.put(DataContract.TableContract.MOVIE_TITLE, model.getTitle());
-        contentValues.put(DataContract.TableContract.MOVIE_POSTER, model.getPosterPath());
-        contentValues.put(DataContract.TableContract.MOVIE_OVERVIEW, model.getOverview());
-        contentValues.put(DataContract.TableContract.MOVIE_VOTE, model.getVoteAverage());
-        this.getContentResolver().insert(DataContract.TableContract.CONTENT_URI_TABLE, contentValues);
-        Toast.makeText(this, getString(R.string.movie_added), Toast.LENGTH_SHORT).show();
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DataContract.TableContract.MOVIE_ID, model.getId());
+            contentValues.put(DataContract.TableContract.MOVIE_TITLE, model.getTitle());
+            contentValues.put(DataContract.TableContract.MOVIE_POSTER, model.getPosterPath());
+            contentValues.put(DataContract.TableContract.MOVIE_OVERVIEW, model.getOverview());
+            contentValues.put(DataContract.TableContract.MOVIE_VOTE, model.getVoteAverage());
+            this.getContentResolver().insert(DataContract.TableContract.CONTENT_URI_TABLE, contentValues);
+            Toast.makeText(this, getString(R.string.movie_added), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void cursorData(String title, String vote, String overview, String poster) {
